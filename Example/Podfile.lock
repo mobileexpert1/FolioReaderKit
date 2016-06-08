@@ -22,7 +22,7 @@ DEPENDENCIES:
 
 EXTERNAL SOURCES:
   FolioReaderKit:
-    :path: "../"
+    :path: ../
 
 SPEC CHECKSUMS:
   AEXML: 716fb0a8decba4a3517324a71fee3685b30233d2
