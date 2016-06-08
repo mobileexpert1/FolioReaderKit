@@ -194,13 +194,11 @@ internal extension UINavigationBar {
     }
 
     private func hairlineImageViewInNavigationBar(view: UIView) -> UIImageView? {
-        if view.isKindOfClass(UIImageView) && view.bounds.height <= 1.0 {
-            return (view as! UIImageView)
+        if let imageView = view as? UIImageView where imageView.bounds.height <= 1.0 {
+            return imageView
         }
-
-        let subviews = (view.subviews )
-        for subview: UIView in subviews {
-            if let imageView: UIImageView = hairlineImageViewInNavigationBar(subview) {
+        for subview in view.subviews {
+            if let imageView = hairlineImageViewInNavigationBar(subview) {
                 return imageView
             }
         }
