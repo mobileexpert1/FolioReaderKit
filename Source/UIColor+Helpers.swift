@@ -84,7 +84,6 @@ internal extension UIColor {
 
     // MARK: - color shades
     // https://gist.github.com/mbigatti/c6be210a6bbc0ff25972
-
     func highlightColor() -> UIColor {
 
         var hue : CGFloat = 0
