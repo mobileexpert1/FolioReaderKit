@@ -23,6 +23,9 @@ enum SlideOutState {
     }
 }
 
+/**
+ Protocol that informs the delegate of activity in the Side Panel, such as open, close, and row selected in menu.
+ */
 protocol FolioReaderContainerDelegate: class {
     /**
     Notifies that the menu was expanded.
@@ -40,6 +43,9 @@ protocol FolioReaderContainerDelegate: class {
     func container(sidePanel: FolioReaderSidePanel, didSelectRowAtIndexPath indexPath: NSIndexPath, withTocReference reference: FRTocReference)
 }
 
+/**
+ Top-level ViewController that encompasses the entire reader.
+*/
 class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
     weak var delegate: FolioReaderContainerDelegate!
     var centerNavigationController: UINavigationController!
@@ -57,7 +63,8 @@ class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    
+
+
     init(config configOrNil: FolioReaderConfig!, epubPath epubPathOrNil: String? = nil, removeEpub: Bool) {
         readerConfig = configOrNil
         epubPath = epubPathOrNil
@@ -104,49 +111,51 @@ class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
         centerNavigationController.view.addGestureRecognizer(panGestureRecognizer)
 
         // Read async book
-        if (epubPath != nil) {
-            let priority = DISPATCH_QUEUE_PRIORITY_HIGH
-            dispatch_async(dispatch_get_global_queue(priority, 0), { () -> Void in
-                
-                var isDir: ObjCBool = false
-                let fileManager = NSFileManager.defaultManager()
-                
-                if fileManager.fileExistsAtPath(epubPath!, isDirectory:&isDir) {
-                    if isDir {
-                        book = FREpubParser().readEpub(filePath: epubPath!)
-                    } else {
-                        book = FREpubParser().readEpub(epubPath: epubPath!, removeEpub: self.shouldRemoveEpub)
-                    }
-                }
-                else {
-                    print("Epub file does not exist.")
-                    self.errorOnLoad = true
-                }
-                
-                FolioReader.sharedInstance.isReaderOpen = true
-                
-                if !self.errorOnLoad {
-                    // Reload data
-                    dispatch_async(dispatch_get_main_queue(), {
-                        self.centerViewController.reloadData()
-                        self.addLeftPanelViewController()
-                        self.addAudioPlayer()
-                        
-                        // Open panel if does not have a saved point
-                        if FolioReader.defaults.valueForKey(kBookId) == nil {
-                            self.toggleLeftPanel()
-                        }
-                        
-                        FolioReader.sharedInstance.isReaderReady = true
-                    })
-                }
-            })
-        } else {
+        guard let epubPath = epubPath else {
             print("Epub path is nil.")
             errorOnLoad = true
+            return
         }
+
+        let priority = DISPATCH_QUEUE_PRIORITY_HIGH
+        dispatch_async(dispatch_get_global_queue(priority, 0), {
+
+            var isDir: ObjCBool = false
+            let fileManager = NSFileManager.defaultManager()
+
+            if fileManager.fileExistsAtPath(epubPath, isDirectory:&isDir) {
+                if isDir {
+                    book = FREpubParser().readEpub(filePath: epubPath)
+                } else {
+                    book = FREpubParser().readEpub(epubPath: epubPath, removeEpub: self.shouldRemoveEpub)
+                }
+            }
+            else {
+                print("Epub file does not exist.")
+                self.errorOnLoad = true
+            }
+
+            FolioReader.sharedInstance.isReaderOpen = true
+            
+            guard self.errorOnLoad == false else {
+                return
+            }
+            // Reload data
+            dispatch_async(dispatch_get_main_queue(), {
+                self.centerViewController.reloadData()
+                self.addLeftPanelViewController()
+                self.addAudioPlayer()
+
+                // Open panel if does not have a saved point
+                if FolioReader.defaults.valueForKey(kBookId) == nil {
+                    self.toggleLeftPanel()
+                }
+
+                FolioReader.sharedInstance.isReaderReady = true
+            })
+        })
     }
-    
+
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         showShadowForCenterViewController(true)
