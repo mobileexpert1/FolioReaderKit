@@ -46,7 +46,7 @@ protocol FolioReaderContainerDelegate: class {
 /**
  Top-level ViewController that encompasses the entire reader.
 */
-class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
+public class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
     weak var delegate: FolioReaderContainerDelegate!
     var centerNavigationController: UINavigationController!
     var centerViewController: FolioReaderCenter!
@@ -60,7 +60,7 @@ class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
     
     // MARK: - Init
     
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
 
@@ -90,35 +90,112 @@ class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
     
     // MARK: - View life cicle
     
-    override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
-        
-        centerViewController = FolioReaderCenter()
-        centerViewController.folioReaderContainer = self
-        FolioReader.sharedInstance.readerCenter = centerViewController
-        
-        centerNavigationController = UINavigationController(rootViewController: centerViewController)
-        centerNavigationController.setNavigationBarHidden(readerConfig.shouldHideNavigationOnTap, animated: false)
-        view.addSubview(centerNavigationController.view)
-        addChildViewController(centerNavigationController)
-        centerNavigationController.didMoveToParentViewController(self)
-        
-        // Add gestures
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(FolioReaderContainer.handleTapGesture(_:)))
-        tapGestureRecognizer.numberOfTapsRequired = 1
-        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(FolioReaderContainer.handlePanGesture(_:)))
-        centerNavigationController.view.addGestureRecognizer(tapGestureRecognizer)
-        centerNavigationController.view.addGestureRecognizer(panGestureRecognizer)
 
+        createCenterViewController()
+        createCenterNavigationController()
+
+        // Add gestures
+        createTapGestureRecognizer()
+        createPanGestureRecognizer()
         // Read async book
         let priority = DISPATCH_QUEUE_PRIORITY_HIGH
         dispatch_async(dispatch_get_global_queue(priority, 0), tryLoadingEbook)
     }
 
+    override public func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        showShadowForCenterViewController(true)
+        // @TODO: can we actually guarantee that `errorOnLoad` will be set before `viewDidAppear(_:)` is called?
+        if errorOnLoad {
+            dismissViewControllerAnimated(true, completion: nil)
+        }
+    }
+
+    // MARK: UI Creation
+
+    /**
+     Initializes a `FolioReaderCenter`, sets itself as the container, and sets it on the `FolioReader` singleton.
+    */
+    private func createCenterViewController() {
+        centerViewController = setupCenterViewController()
+        centerViewController.folioReaderContainer = self
+        FolioReader.sharedInstance.readerCenter = centerViewController
+    }
+
+    /**
+     Customization point for the `FolioReaderCenter`. 
+     
+     Override this method to inject your subclass of `FolioReaderCenter` into the Reader.
+     
+     - seealso: `FolioReaderCenter`
+    */
+    public func setupCenterViewController() -> FolioReaderCenter {
+        return FolioReaderCenter()
+    }
+
+    /**
+     Initializes the `centerNavigationController` with `centerViewController` as the root view controller, adds it to the view hierarchy, 
+     and configures the navigation bar.
+     
+     - precondition: `centerViewController` has already been set.
+    */
+    private func createCenterNavigationController() {
+        centerNavigationController = UINavigationController(rootViewController: centerViewController)
+        centerNavigationController.setNavigationBarHidden(readerConfig.shouldHideNavigationOnTap, animated: false)
+        view.addSubview(centerNavigationController.view)
+        addChildViewController(centerNavigationController)
+        centerNavigationController.didMoveToParentViewController(self)
+    }
+
+    /**
+     Creates Tap Recognizer in the center view, responsible for showing and hiding the navigation bar, if `shouldHideNavigationOnTap` is `true`.
+     
+     We add our own actions here so that clients can't break FolioReader by not calling `super`
+    */
+    private func createTapGestureRecognizer() {
+        let tapGestureRecognizer = setupTapGestureRecognizer()
+        tapGestureRecognizer.addTarget(self, action: #selector(FolioReaderContainer.handleTapGesture(_:)))
+        tapGestureRecognizer.numberOfTapsRequired = 1
+        centerNavigationController.view.addGestureRecognizer(tapGestureRecognizer)
+    }
+
+    /**
+     Customization point for the Tap Recognizer in the center view.
+     
+     Override this method if you want to add your own actions to the tap gesture recognizer.
+    */
+    public func setupTapGestureRecognizer() -> UITapGestureRecognizer {
+        return UITapGestureRecognizer()
+    }
+
+    /**
+     Creates the Pan Recognizer in the center view, responsible for showing and hiding the side menu.
+     
+     We add our own actions here so that clients can't break FolioReader by not calling `super`
+    */
+    private func createPanGestureRecognizer() {
+        let panGestureRecognizer = setupPanGestureRecognizer()
+        panGestureRecognizer.addTarget(self, action: #selector(FolioReaderContainer.handlePanGesture(_:)))
+        centerNavigationController.view.addGestureRecognizer(panGestureRecognizer)
+    }
+
+    /**
+     Customization point for the Pan Recognizer in the center view. 
+     
+     Override this ethod if you want to add your own actions to the pan gesture recognizer.
+    */
+    public func setupPanGestureRecognizer() -> UIPanGestureRecognizer {
+        return UIPanGestureRecognizer()
+    }
+
+    // MARK: Ebook Loading
+
     /**
      Attempts to open the passed-in `epubPath`
      
-     If the epubPath is nil, the `errorOnLoad` flag will be set, and the view controller will be dismissed
+     If the `epubPath` is nil, the `errorOnLoad` flag will be set, and the view controller will be dismissed once it's finished loading.
     */
     private func tryLoadingEbook() {
         guard let epubPath = epubPath else {
@@ -151,6 +228,11 @@ class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
         dispatch_async(dispatch_get_main_queue(), ebookDidLoad)
     }
 
+    /**
+     Reloads the `centerViewController` and adds the remaining UI.
+     
+     - precondition: Ebook has been successfully loaded.
+    */
     private func ebookDidLoad() {
         self.centerViewController.reloadData()
         self.addLeftPanelViewController()
@@ -164,46 +246,52 @@ class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
         FolioReader.sharedInstance.isReaderReady = true
     }
 
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-        showShadowForCenterViewController(true)
-        // @NOTE: can we actually guarantee that `errorOnLoad` will be set before `viewDidAppear(_:)` is called?
-        if errorOnLoad {
-            dismissViewControllerAnimated(true, completion: nil)
-        }
-    }
-    
     // MARK: CenterViewController delegate methods
-    
+
+    /**
+     Opens/closes the Left Panel depending on current state. 
+     
+     If the Left Panel is not expanded it is created.
+    */
     func toggleLeftPanel() {
         let notAlreadyExpanded = (currentState != .LeftPanelExpanded)
-        
+
+        /* 
+         FIXME: this seems a little hacky. We should either check if `leftPanelViewController` is nil here,
+         or just always call `addLeftPanelViewController`, since it checks for nil. 
+         This if-statement seems misleading, as if it re-create the Left Panel every single time we need it.
+        */
         if notAlreadyExpanded {
             addLeftPanelViewController()
         }
         
         animateLeftPanel(shouldExpand: notAlreadyExpanded)
     }
-    
+
+    /**
+     Closes the Left Panel if it is currently open; does nothing otherwise.
+    */
     func collapseSidePanels() {
-        switch (currentState) {
-        case .LeftPanelExpanded:
+        if case .LeftPanelExpanded = currentState {
             toggleLeftPanel()
-        default:
-            break
         }
     }
-    
+
+    /**
+     Adds the Left Panel iff it has not been created yet.
+    */
     func addLeftPanelViewController() {
-        if (leftViewController == nil) {
-            leftViewController = FolioReaderSidePanel()
-            leftViewController.delegate = self
-            addChildSidePanelController(leftViewController!)
-            
-            FolioReader.sharedInstance.readerSidePanel = leftViewController
+        guard leftViewController == nil else {
+            return
         }
+        leftViewController = FolioReaderSidePanel()
+        leftViewController.delegate = self
+        addChildSidePanelController(leftViewController!)
+
+        FolioReader.sharedInstance.readerSidePanel = leftViewController
     }
-    
+
+    // TODO: This only gets called once; is it really worth separating it out of an 8-line function?
     func addChildSidePanelController(sidePanelController: FolioReaderSidePanel) {
         view.insertSubview(sidePanelController.view, atIndex: 0)
         addChildViewController(sidePanelController)
@@ -242,7 +330,9 @@ class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
             self.centerNavigationController.view.frame.origin.x = targetPosition
             }, completion: completion)
     }
-    
+
+    // TODO: this is only called once, and always with `true`. Worth removing/refactoring? 
+    // This could just get absorbed into `createCenterNavigationController`
     func showShadowForCenterViewController(shouldShowShadow: Bool) {
         if (shouldShowShadow) {
             centerNavigationController.view.layer.shadowOpacity = 0.2
@@ -272,7 +362,7 @@ class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
     
     func handlePanGesture(recognizer: UIPanGestureRecognizer) {
         let gestureIsDraggingFromLeftToRight = (recognizer.velocityInView(view).x > 0)
-        // TODO: we force-unwrap `recognizer.view!` so much here that we might as well just guard against it and save the keystrokes/exclamation-mark stress
+        // FIXME: we force-unwrap `recognizer.view!` so much here that we might as well just guard against it and save the keystrokes/exclamation-mark stress
         switch(recognizer.state) {
         case .Began where currentState == .BothCollapsed && gestureIsDraggingFromLeftToRight:
             currentState = .Expanding
@@ -294,15 +384,15 @@ class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
     
     // MARK: - Status Bar
     
-    override func prefersStatusBarHidden() -> Bool {
+    override public func prefersStatusBarHidden() -> Bool {
         return readerConfig.shouldHideNavigationOnTap == false ? false : shouldHideStatusBar
     }
     
-    override func preferredStatusBarUpdateAnimation() -> UIStatusBarAnimation {
+    override public func preferredStatusBarUpdateAnimation() -> UIStatusBarAnimation {
         return UIStatusBarAnimation.Slide
     }
     
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+    override public func preferredStatusBarStyle() -> UIStatusBarStyle {
         return isNight(.LightContent, .Default)
     }
     
