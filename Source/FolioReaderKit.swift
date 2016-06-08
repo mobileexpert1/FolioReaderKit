@@ -21,7 +21,7 @@ internal let isLargePhone = isPhone6P
 
 // MARK: - Internal constants
 
-internal let kApplicationDocumentsDirectory = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0] 
+internal let kApplicationDocumentsDirectory = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0]
 internal let kCurrentFontFamily = "kCurrentFontFamily"
 internal let kCurrentFontSize = "kCurrentFontSize"
 internal let kCurrentAudioRate = "kCurrentAudioRate"
@@ -32,30 +32,30 @@ internal let kHighlightRange = 30
 internal var kBookId: String!
 
 /**
- `0` Default  
- `1` Underline  
+ `0` Default
+ `1` Underline
  `2` Text Color
-*/
+ */
 enum MediaOverlayStyle: Int {
     case Default
     case Underline
     case TextColor
-    
+
     init () {
         self = .Default
     }
-    
+
     func className() -> String {
         return "mediaOverlayStyle\(self.rawValue)"
     }
 }
 
 /**
-*  Main Library class with some useful constants and methods
-*/
+ *  Main Library class with some useful constants and methods
+ */
 public class FolioReader : NSObject {
     private override init() {}
-    
+
     static let sharedInstance = FolioReader()
     static let defaults = NSUserDefaults.standardUserDefaults()
     weak var readerCenter: FolioReaderCenter!
@@ -64,8 +64,8 @@ public class FolioReader : NSObject {
     weak var readerAudioPlayer: FolioReaderAudioPlayer!
     var isReaderOpen = false
     var isReaderReady = false
-    
-    
+
+
     var nightMode: Bool {
         get { return FolioReader.defaults.boolForKey(kNightMode) }
         set (value) {
@@ -80,7 +80,7 @@ public class FolioReader : NSObject {
             FolioReader.defaults.synchronize()
         }
     }
-    
+
     var currentFontSize: Int {
         get { return FolioReader.defaults.valueForKey(kCurrentFontSize) as! Int }
         set (value) {
@@ -88,7 +88,7 @@ public class FolioReader : NSObject {
             FolioReader.defaults.synchronize()
         }
     }
-    
+
     var currentAudioRate: Int {
         get { return FolioReader.defaults.valueForKey(kCurrentAudioRate) as! Int }
         set (value) {
@@ -104,7 +104,7 @@ public class FolioReader : NSObject {
             FolioReader.defaults.synchronize()
         }
     }
-    
+
     var currentMediaOverlayStyle: MediaOverlayStyle {
         get { return MediaOverlayStyle(rawValue: FolioReader.defaults.valueForKey(kCurrentMediaOverlayStyle) as! Int)! }
         set (value) {
@@ -112,59 +112,58 @@ public class FolioReader : NSObject {
             FolioReader.defaults.synchronize()
         }
     }
-    
+
     // MARK: - Get Cover Image
-    
+
     /**
      Read Cover Image and Return an IUImage
      */
-    
     public class func getCoverImage(epubPath: String) -> UIImage? {
         return FREpubParser().parseCoverImage(epubPath)
     }
 
     // MARK: - Present Folio Reader
-    
+
     /**
-    Present a Folio Reader for a Parent View Controller.
-    */
+     Present a Folio Reader for a Parent View Controller.
+     */
     public class func presentReader(parentViewController parentViewController: UIViewController, withEpubPath epubPath: String, andConfig config: FolioReaderConfig, shouldRemoveEpub: Bool = true, animated: Bool = true) {
         let reader = FolioReaderContainer(config: config, epubPath: epubPath, removeEpub: shouldRemoveEpub)
         FolioReader.sharedInstance.readerContainer = reader
         parentViewController.presentViewController(reader, animated: animated, completion: nil)
     }
-    
+
     // MARK: - Application State
-    
+
     /**
-    Called when the application will resign active
-    */
+     Called when the application will resign active
+     */
     public class func applicationWillResignActive() {
         saveReaderState()
     }
-    
+
     /**
-    Called when the application will terminate
-    */
+     Called when the application will terminate
+     */
     public class func applicationWillTerminate() {
         saveReaderState()
     }
-    
+
     /**
-    Save Reader state, book, page and scroll are saved
-    */
+     Save Reader state, book, page and scroll are saved
+     */
     class func saveReaderState() {
-        if FolioReader.sharedInstance.isReaderOpen {
-            if let currentPage = FolioReader.sharedInstance.readerCenter.currentPage {
-                let position = [
-                    "pageNumber": currentPageNumber,
-                    "pageOffset": currentPage.webView.scrollView.contentOffset.y
-                ]
-                
-                FolioReader.defaults.setObject(position, forKey: kBookId)
-                FolioReader.defaults.synchronize()
-            }
+        guard FolioReader.sharedInstance.isReaderOpen,
+            let currentPage = FolioReader.sharedInstance.readerCenter?.currentPage else {
+                return
         }
+        let position = [
+            "pageNumber": currentPageNumber,
+            "pageOffset": currentPage.webView.scrollView.contentOffset.y
+        ]
+
+        FolioReader.defaults.setObject(position, forKey: kBookId)
+        FolioReader.defaults.synchronize()
     }
 }
 
@@ -183,50 +182,55 @@ internal extension NSBundle {
 }
 
 internal extension UIColor {
+    /**
+     Initializes UIColor object from a hex-string. 
+     
+     If an invalid hex-string is specified, .blackColor() is returned.
+     
+     - parameter rgba: octothorpe ('#') prefixed, valid hexadecimal string with either 3, 4, 6 or 8 digits.
+     - returns: the represented color, or black on an invalid input.
+    */
     convenience init(rgba: String) {
         var red:   CGFloat = 0.0
         var green: CGFloat = 0.0
         var blue:  CGFloat = 0.0
         var alpha: CGFloat = 1.0
-        
-        if rgba.hasPrefix("#") {
-            let index   = rgba.startIndex.advancedBy(1)
-            let hex     = rgba.substringFromIndex(index)
-            let scanner = NSScanner(string: hex)
-            var hexValue: CUnsignedLongLong = 0
-            if scanner.scanHexLongLong(&hexValue) {
-                switch (hex.characters.count) {
-                case 3:
-                    red   = CGFloat((hexValue & 0xF00) >> 8)       / 15.0
-                    green = CGFloat((hexValue & 0x0F0) >> 4)       / 15.0
-                    blue  = CGFloat(hexValue & 0x00F)              / 15.0
-                    break
-                case 4:
-                    red   = CGFloat((hexValue & 0xF000) >> 12)     / 15.0
-                    green = CGFloat((hexValue & 0x0F00) >> 8)      / 15.0
-                    blue  = CGFloat((hexValue & 0x00F0) >> 4)      / 15.0
-                    alpha = CGFloat(hexValue & 0x000F)             / 15.0
-                    break
-                case 6:
-                    red   = CGFloat((hexValue & 0xFF0000) >> 16)   / 255.0
-                    green = CGFloat((hexValue & 0x00FF00) >> 8)    / 255.0
-                    blue  = CGFloat(hexValue & 0x0000FF)           / 255.0
-                    break
-                case 8:
-                    red   = CGFloat((hexValue & 0xFF000000) >> 24) / 255.0
-                    green = CGFloat((hexValue & 0x00FF0000) >> 16) / 255.0
-                    blue  = CGFloat((hexValue & 0x0000FF00) >> 8)  / 255.0
-                    alpha = CGFloat(hexValue & 0x000000FF)         / 255.0
-                    break
-                default:
-                    print("Invalid RGB string, number of characters after '#' should be either 3, 4, 6 or 8", terminator: "")
-                    break
-                }
-            } else {
-                print("Scan hex error")
-            }
-        } else {
-            print("Invalid RGB string, missing '#' as prefix", terminator: "")
+
+        guard rgba.hasPrefix("#") else {
+            print("Invalid RGB string, missing '#' as prefix")
+            self.init(red:red, green:green, blue:blue, alpha:alpha)
+            return
+        }
+        let index   = rgba.startIndex.advancedBy(1)
+        let hex     = rgba.substringFromIndex(index)
+        let scanner = NSScanner(string: hex)
+        var hexValue: CUnsignedLongLong = 0
+        guard scanner.scanHexLongLong(&hexValue) else {
+            print("Scan hex error")
+            self.init(red:red, green:green, blue:blue, alpha:alpha)
+            return
+        }
+        switch hex.characters.count {
+        case 3:
+            red   = CGFloat((hexValue & 0xF00) >> 8)       / 15.0
+            green = CGFloat((hexValue & 0x0F0) >> 4)       / 15.0
+            blue  = CGFloat(hexValue & 0x00F)              / 15.0
+        case 4:
+            red   = CGFloat((hexValue & 0xF000) >> 12)     / 15.0
+            green = CGFloat((hexValue & 0x0F00) >> 8)      / 15.0
+            blue  = CGFloat((hexValue & 0x00F0) >> 4)      / 15.0
+            alpha = CGFloat(hexValue & 0x000F)             / 15.0
+        case 6:
+            red   = CGFloat((hexValue & 0xFF0000) >> 16)   / 255.0
+            green = CGFloat((hexValue & 0x00FF00) >> 8)    / 255.0
+            blue  = CGFloat(hexValue & 0x0000FF)           / 255.0
+        case 8:
+            red   = CGFloat((hexValue & 0xFF000000) >> 24) / 255.0
+            green = CGFloat((hexValue & 0x00FF0000) >> 16) / 255.0
+            blue  = CGFloat((hexValue & 0x0000FF00) >> 8)  / 255.0
+            alpha = CGFloat(hexValue & 0x000000FF)         / 255.0
+        default:
+            print("Invalid RGB string, number of characters after '#' should be either 3, 4, 6 or 8", terminator: "")
         }
         self.init(red:red, green:green, blue:blue, alpha:alpha)
     }
@@ -319,11 +323,11 @@ internal extension String {
             return self
         }
     }
-    
+
     func stripHtml() -> String {
         return self.stringByReplacingOccurrencesOfString("<[^>]+>", withString: "", options: .RegularExpressionSearch)
     }
-    
+
     func stripLineBreaks() -> String {
         return self.stringByReplacingOccurrencesOfString("\n", withString: "", options: .RegularExpressionSearch)
     }
@@ -338,7 +342,7 @@ internal extension String {
      - Returns: seconds as `Double`
 
      [1]: http://www.idpf.org/epub/301/spec/epub-mediaoverlays.html#app-clock-examples
-    */
+     */
     func clockTimeToSeconds() -> Double {
 
         let val = self.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
@@ -351,7 +355,7 @@ internal extension String {
             "mm:ss.SSS"     : "^\\d{1,2}:\\d{2}\\.\\d{1,3}$",
             "mm:ss"         : "^\\d{1,2}:\\d{2}$",
             "ss.SSS"         : "^\\d{1,2}\\.\\d{1,3}$",
-        ]
+            ]
 
         // search for normal duration formats such as `00:05:01.2`
         for (format, pattern) in formats {
@@ -414,64 +418,64 @@ internal extension UIImage {
         let traits = UITraitCollection(displayScale: UIScreen.mainScreen().scale)
         self.init(named: readerImageNamed, inBundle: NSBundle.frameworkBundle(), compatibleWithTraitCollection: traits)
     }
-    
+
     func imageTintColor(tintColor: UIColor) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(self.size, false, self.scale)
-        
+
         let context = UIGraphicsGetCurrentContext()! as CGContextRef
         CGContextTranslateCTM(context, 0, self.size.height)
         CGContextScaleCTM(context, 1.0, -1.0)
         CGContextSetBlendMode(context, CGBlendMode.Normal)
-        
+
         let rect = CGRectMake(0, 0, self.size.width, self.size.height) as CGRect
         CGContextClipToMask(context, rect, self.CGImage)
         tintColor.setFill()
         CGContextFillRect(context, rect)
-        
+
         let newImage = UIGraphicsGetImageFromCurrentImageContext() as UIImage
         UIGraphicsEndImageContext()
-        
+
         return newImage
     }
-    
+
     class func imageWithColor(color: UIColor?) -> UIImage! {
         let rect = CGRectMake(0.0, 0.0, 1.0, 1.0)
         UIGraphicsBeginImageContextWithOptions(rect.size, false, 0)
         let context = UIGraphicsGetCurrentContext()
-        
+
         if let color = color {
             color.setFill()
         } else {
             UIColor.whiteColor().setFill()
         }
-        
+
         CGContextFillRect(context, rect)
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-        
+
         return image
     }
 }
 
 extension UIViewController: UIGestureRecognizerDelegate {
-    
+
     func setCloseButton() {
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(readerImageNamed: "icon-close"), style: UIBarButtonItemStyle.Plain, target: self, action:#selector(UIViewController.dismiss))
     }
-    
+
     func dismiss() {
         self.dismissViewControllerAnimated(true, completion: nil)
     }
-    
+
     // MARK: - NavigationBar
-    
+
     func setTransparentNavigation() {
         let navBar = self.navigationController?.navigationBar
         navBar?.setBackgroundImage(UIImage(), forBarMetrics: UIBarMetrics.Default)
         navBar?.hideBottomHairline()
         navBar?.translucent = true
     }
-    
+
     func setTranslucentNavigation(translucent: Bool = true, color: UIColor, tintColor: UIColor = UIColor.whiteColor(), titleColor: UIColor = UIColor.blackColor(), andFont font: UIFont = UIFont.systemFontOfSize(17)) {
         let navBar = self.navigationController?.navigationBar
         navBar?.setBackgroundImage(UIImage.imageWithColor(color), forBarMetrics: UIBarMetrics.Default)
@@ -483,22 +487,22 @@ extension UIViewController: UIGestureRecognizerDelegate {
 }
 
 internal extension UINavigationBar {
-    
+
     func hideBottomHairline() {
         let navigationBarImageView = hairlineImageViewInNavigationBar(self)
         navigationBarImageView!.hidden = true
     }
-    
+
     func showBottomHairline() {
         let navigationBarImageView = hairlineImageViewInNavigationBar(self)
         navigationBarImageView!.hidden = false
     }
-    
+
     private func hairlineImageViewInNavigationBar(view: UIView) -> UIImageView? {
         if view.isKindOfClass(UIImageView) && view.bounds.height <= 1.0 {
             return (view as! UIImageView)
         }
-        
+
         let subviews = (view.subviews )
         for subview: UIView in subviews {
             if let imageView: UIImageView = hairlineImageViewInNavigationBar(subview) {
