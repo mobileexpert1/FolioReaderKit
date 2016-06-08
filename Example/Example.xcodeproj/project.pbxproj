@@ -7,23 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		13EEB9E592A80F9B0437B43C /* Pods_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D6C7FEDB0C1CA1F769F87ED /* Pods_Example.framework */; };
+		13EEB9E592A80F9B0437B43C /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		1A42C28D1C0E3882000F2137 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A42C28C1C0E3882000F2137 /* AppDelegate.swift */; };
 		1A42C28F1C0E3882000F2137 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A42C28E1C0E3882000F2137 /* ViewController.swift */; };
 		1A42C2921C0E3883000F2137 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1A42C2901C0E3883000F2137 /* Main.storyboard */; };
 		1A42C2941C0E3883000F2137 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A42C2931C0E3883000F2137 /* Assets.xcassets */; };
 		1A42C2A21C0E3A8D000F2137 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1A42C2A01C0E3A8D000F2137 /* LaunchScreen.storyboard */; };
-<<<<<<< HEAD
 		6E3C4A3F1C3C6708009CBC8C /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E3C4A3E1C3C6708009CBC8C /* MediaPlayer.framework */; };
 		6E5C9B051C4037B7008F6FD9 /* The Silver Chair.epub in Resources */ = {isa = PBXBuildFile; fileRef = 6E5C9B031C4037B7008F6FD9 /* The Silver Chair.epub */; };
 		6E5C9B091C403968008F6FD9 /* The Adventures Of Sherlock Holmes - Adventure I.epub in Resources */ = {isa = PBXBuildFile; fileRef = 6E5C9B081C403942008F6FD9 /* The Adventures Of Sherlock Holmes - Adventure I.epub */; };
-=======
-		3892D3367B967DE6AC5DAB2A /* Pods_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790C2315C08D6A144C259FC8 /* Pods_Example.framework */; };
-		6E3C4A3F1C3C6708009CBC8C /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E3C4A3E1C3C6708009CBC8C /* MediaPlayer.framework */; };
-		6E5C9B051C4037B7008F6FD9 /* The Silver Chair.epub in Resources */ = {isa = PBXBuildFile; fileRef = 6E5C9B031C4037B7008F6FD9 /* The Silver Chair.epub */; };
-		6E5C9B091C403968008F6FD9 /* The Adventures Of Sherlock Holmes - Adventure I.epub in Resources */ = {isa = PBXBuildFile; fileRef = 6E5C9B081C403942008F6FD9 /* The Adventures Of Sherlock Holmes - Adventure I.epub */; };
-		89619E724F9134F787C2FACE /* Pods_FolioReaderTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC77A5AA84684090E7A877E /* Pods_FolioReaderTests.framework */; };
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
+		A00C5064D1451E7FACA2A4C7 /* Pods_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE57537FF12FB24E78E97679 /* Pods_Example.framework */; };
 		CA10C1341C572A4B0049165D /* FolioReaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA10C1331C572A4B0049165D /* FolioReaderTests.swift */; };
 		CA61603F1C572C4C00ACD034 /* The Adventures Of Sherlock Holmes - Adventure I.epub in Resources */ = {isa = PBXBuildFile; fileRef = 6E5C9B081C403942008F6FD9 /* The Adventures Of Sherlock Holmes - Adventure I.epub */; };
 		CA6160401C572C4C00ACD034 /* The Silver Chair.epub in Resources */ = {isa = PBXBuildFile; fileRef = 6E5C9B031C4037B7008F6FD9 /* The Silver Chair.epub */; };
@@ -42,10 +35,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-<<<<<<< HEAD
-		0D6C7FEDB0C1CA1F769F87ED /* Pods_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-=======
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
 		1A42C2891C0E3882000F2137 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A42C28C1C0E3882000F2137 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1A42C28E1C0E3882000F2137 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -53,7 +42,6 @@
 		1A42C2931C0E3883000F2137 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1A42C2981C0E3883000F2137 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1A42C2A11C0E3A8D000F2137 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-<<<<<<< HEAD
 		27131F41E20F15F72AAF7176 /* Pods_FolioReaderTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FolioReaderTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CE90B4095B5C7E6237EEBDD /* Pods-FolioReaderTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FolioReaderTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FolioReaderTests/Pods-FolioReaderTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5C8EADB52E1D834750CD7D23 /* Pods-Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Example/Pods-Example.debug.xcconfig"; sourceTree = "<group>"; };
@@ -61,25 +49,12 @@
 		6E5C9B031C4037B7008F6FD9 /* The Silver Chair.epub */ = {isa = PBXFileReference; lastKnownFileType = file; path = "The Silver Chair.epub"; sourceTree = "<group>"; };
 		6E5C9B081C403942008F6FD9 /* The Adventures Of Sherlock Holmes - Adventure I.epub */ = {isa = PBXFileReference; lastKnownFileType = file; path = "The Adventures Of Sherlock Holmes - Adventure I.epub"; sourceTree = "<group>"; };
 		8E1BE6465444C567F5D1B8E6 /* Pods-FolioReaderTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FolioReaderTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-FolioReaderTests/Pods-FolioReaderTests.release.xcconfig"; sourceTree = "<group>"; };
-=======
-		2BC77A5AA84684090E7A877E /* Pods_FolioReaderTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FolioReaderTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		34CC3834DDCF19E0DAB4995D /* Pods-Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Example/Pods-Example.debug.xcconfig"; sourceTree = "<group>"; };
-		6E3C4A3E1C3C6708009CBC8C /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
-		6E5C9B031C4037B7008F6FD9 /* The Silver Chair.epub */ = {isa = PBXFileReference; lastKnownFileType = file; path = "The Silver Chair.epub"; sourceTree = "<group>"; };
-		6E5C9B081C403942008F6FD9 /* The Adventures Of Sherlock Holmes - Adventure I.epub */ = {isa = PBXFileReference; lastKnownFileType = file; path = "The Adventures Of Sherlock Holmes - Adventure I.epub"; sourceTree = "<group>"; };
-		790C2315C08D6A144C259FC8 /* Pods_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B60E6F4AB327A04DA131AB07 /* Pods-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Example/Pods-Example.release.xcconfig"; sourceTree = "<group>"; };
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
 		CA10C1311C572A4B0049165D /* FolioReaderTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FolioReaderTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA10C1331C572A4B0049165D /* FolioReaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolioReaderTests.swift; sourceTree = "<group>"; };
 		CA10C1351C572A4B0049165D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		CAC0269E94F6AC7117779473 /* Pods-FolioReaderTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FolioReaderTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-FolioReaderTests/Pods-FolioReaderTests.release.xcconfig"; sourceTree = "<group>"; };
 		CAF233281C57E1F400CB930C /* SharingProviderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingProviderTests.swift; sourceTree = "<group>"; };
-<<<<<<< HEAD
 		F4CBB0C2C0FDFA3E1648DB43 /* Pods-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Example/Pods-Example.release.xcconfig"; sourceTree = "<group>"; };
-=======
-		D596C985E0E5B3EF80D41A83 /* Pods-FolioReaderTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FolioReaderTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FolioReaderTests/Pods-FolioReaderTests.debug.xcconfig"; sourceTree = "<group>"; };
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
+		FE57537FF12FB24E78E97679 /* Pods_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,11 +63,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E3C4A3F1C3C6708009CBC8C /* MediaPlayer.framework in Frameworks */,
-<<<<<<< HEAD
-				13EEB9E592A80F9B0437B43C /* Pods_Example.framework in Frameworks */,
-=======
-				3892D3367B967DE6AC5DAB2A /* Pods_Example.framework in Frameworks */,
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
+				13EEB9E592A80F9B0437B43C /* (null) in Frameworks */,
+				A00C5064D1451E7FACA2A4C7 /* Pods_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,11 +72,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-<<<<<<< HEAD
 				DB8597912791266AA602B5B1 /* Pods_FolioReaderTests.framework in Frameworks */,
-=======
-				89619E724F9134F787C2FACE /* Pods_FolioReaderTests.framework in Frameworks */,
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -118,11 +86,7 @@
 				CA10C1321C572A4B0049165D /* FolioReaderTests */,
 				1A42C28A1C0E3882000F2137 /* Products */,
 				D394FAB8B11D7C692E7BE00D /* Frameworks */,
-<<<<<<< HEAD
 				4FAF8E8BF5565FFE2E47F8F7 /* Pods */,
-=======
-				A37AE325A2FFA6595270E5BF /* Pods */,
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
 			);
 			sourceTree = "<group>";
 		};
@@ -169,17 +133,6 @@
 			path = "Sample eBooks";
 			sourceTree = "<group>";
 		};
-		A37AE325A2FFA6595270E5BF /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				34CC3834DDCF19E0DAB4995D /* Pods-Example.debug.xcconfig */,
-				B60E6F4AB327A04DA131AB07 /* Pods-Example.release.xcconfig */,
-				D596C985E0E5B3EF80D41A83 /* Pods-FolioReaderTests.debug.xcconfig */,
-				CAC0269E94F6AC7117779473 /* Pods-FolioReaderTests.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
 		CA10C1321C572A4B0049165D /* FolioReaderTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -194,13 +147,8 @@
 			isa = PBXGroup;
 			children = (
 				6E3C4A3E1C3C6708009CBC8C /* MediaPlayer.framework */,
-<<<<<<< HEAD
-				0D6C7FEDB0C1CA1F769F87ED /* Pods_Example.framework */,
 				27131F41E20F15F72AAF7176 /* Pods_FolioReaderTests.framework */,
-=======
-				790C2315C08D6A144C259FC8 /* Pods_Example.framework */,
-				2BC77A5AA84684090E7A877E /* Pods_FolioReaderTests.framework */,
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
+				FE57537FF12FB24E78E97679 /* Pods_Example.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -212,21 +160,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1A42C29B1C0E3883000F2137 /* Build configuration list for PBXNativeTarget "Example" */;
 			buildPhases = (
-<<<<<<< HEAD
 				BFF78AC0EC7FAA2ADF7765C4 /* 📦 Check Pods Manifest.lock */,
 				1A42C2851C0E3882000F2137 /* Sources */,
 				1A42C2861C0E3882000F2137 /* Frameworks */,
 				1A42C2871C0E3882000F2137 /* Resources */,
 				B6A166DC30D64CDC32736E22 /* 📦 Embed Pods Frameworks */,
 				8F716768EB59E9B6D88C48D7 /* 📦 Copy Pods Resources */,
-=======
-				0550FA51A23840B2ABF44885 /* 📦 Check Pods Manifest.lock */,
-				1A42C2851C0E3882000F2137 /* Sources */,
-				1A42C2861C0E3882000F2137 /* Frameworks */,
-				1A42C2871C0E3882000F2137 /* Resources */,
-				03733CDE068B7F7BB14A48EA /* 📦 Embed Pods Frameworks */,
-				D146316BA7A9F0F4B28C9479 /* 📦 Copy Pods Resources */,
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
 			);
 			buildRules = (
 			);
@@ -241,21 +180,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CA10C1381C572A4B0049165D /* Build configuration list for PBXNativeTarget "FolioReaderTests" */;
 			buildPhases = (
-<<<<<<< HEAD
 				1D8126CC73301F2413345444 /* 📦 Check Pods Manifest.lock */,
 				CA10C12D1C572A4B0049165D /* Sources */,
 				CA10C12E1C572A4B0049165D /* Frameworks */,
 				CA10C12F1C572A4B0049165D /* Resources */,
 				C1392FF51E4FD15EBB5AA8DD /* 📦 Embed Pods Frameworks */,
 				652A7706A17894A2B0BA1503 /* 📦 Copy Pods Resources */,
-=======
-				EBD558ED50E77B4EF90EA5B3 /* 📦 Check Pods Manifest.lock */,
-				CA10C12D1C572A4B0049165D /* Sources */,
-				CA10C12E1C572A4B0049165D /* Frameworks */,
-				CA10C12F1C572A4B0049165D /* Resources */,
-				0949CB29577DE3FBCE551667 /* 📦 Embed Pods Frameworks */,
-				2D645E7AC26AB7FDCC495A7C /* 📦 Copy Pods Resources */,
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
 			);
 			buildRules = (
 			);
@@ -335,100 +265,59 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-<<<<<<< HEAD
 		1D8126CC73301F2413345444 /* 📦 Check Pods Manifest.lock */ = {
-=======
-		03733CDE068B7F7BB14A48EA /* 📦 Embed Pods Frameworks */ = {
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-<<<<<<< HEAD
 			name = "📦 Check Pods Manifest.lock";
-=======
-			name = "📦 Embed Pods Frameworks";
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-<<<<<<< HEAD
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		652A7706A17894A2B0BA1503 /* 📦 Copy Pods Resources */ = {
-=======
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Example/Pods-Example-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		0550FA51A23840B2ABF44885 /* 📦 Check Pods Manifest.lock */ = {
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-<<<<<<< HEAD
 			name = "📦 Copy Pods Resources";
-=======
-			name = "📦 Check Pods Manifest.lock";
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-<<<<<<< HEAD
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-FolioReaderTests/Pods-FolioReaderTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		8F716768EB59E9B6D88C48D7 /* 📦 Copy Pods Resources */ = {
-=======
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		0949CB29577DE3FBCE551667 /* 📦 Embed Pods Frameworks */ = {
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-<<<<<<< HEAD
 			name = "📦 Copy Pods Resources";
-=======
-			name = "📦 Embed Pods Frameworks";
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-<<<<<<< HEAD
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Example/Pods-Example-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		B6A166DC30D64CDC32736E22 /* 📦 Embed Pods Frameworks */ = {
-=======
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-FolioReaderTests/Pods-FolioReaderTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		2D645E7AC26AB7FDCC495A7C /* 📦 Copy Pods Resources */ = {
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-<<<<<<< HEAD
 			name = "📦 Embed Pods Frameworks";
-=======
-			name = "📦 Copy Pods Resources";
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -436,45 +325,29 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Example/Pods-Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-<<<<<<< HEAD
 		BFF78AC0EC7FAA2ADF7765C4 /* 📦 Check Pods Manifest.lock */ = {
-=======
-		D146316BA7A9F0F4B28C9479 /* 📦 Copy Pods Resources */ = {
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-<<<<<<< HEAD
 			name = "📦 Check Pods Manifest.lock";
-=======
-			name = "📦 Copy Pods Resources";
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Example/Pods-Example-resources.sh\"\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-<<<<<<< HEAD
 		C1392FF51E4FD15EBB5AA8DD /* 📦 Embed Pods Frameworks */ = {
-=======
-		EBD558ED50E77B4EF90EA5B3 /* 📦 Check Pods Manifest.lock */ = {
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-<<<<<<< HEAD
 			name = "📦 Embed Pods Frameworks";
-=======
-			name = "📦 Check Pods Manifest.lock";
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -619,11 +492,7 @@
 		};
 		1A42C29C1C0E3883000F2137 /* Debug */ = {
 			isa = XCBuildConfiguration;
-<<<<<<< HEAD
 			baseConfigurationReference = 5C8EADB52E1D834750CD7D23 /* Pods-Example.debug.xcconfig */;
-=======
-			baseConfigurationReference = 34CC3834DDCF19E0DAB4995D /* Pods-Example.debug.xcconfig */;
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = Example/Info.plist;
@@ -635,11 +504,7 @@
 		};
 		1A42C29D1C0E3883000F2137 /* Release */ = {
 			isa = XCBuildConfiguration;
-<<<<<<< HEAD
 			baseConfigurationReference = F4CBB0C2C0FDFA3E1648DB43 /* Pods-Example.release.xcconfig */;
-=======
-			baseConfigurationReference = B60E6F4AB327A04DA131AB07 /* Pods-Example.release.xcconfig */;
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = Example/Info.plist;
@@ -651,11 +516,7 @@
 		};
 		CA10C1391C572A4B0049165D /* Debug */ = {
 			isa = XCBuildConfiguration;
-<<<<<<< HEAD
 			baseConfigurationReference = 3CE90B4095B5C7E6237EEBDD /* Pods-FolioReaderTests.debug.xcconfig */;
-=======
-			baseConfigurationReference = D596C985E0E5B3EF80D41A83 /* Pods-FolioReaderTests.debug.xcconfig */;
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = FolioReaderTests/Info.plist;
@@ -669,11 +530,7 @@
 		};
 		CA10C13A1C572A4B0049165D /* Release */ = {
 			isa = XCBuildConfiguration;
-<<<<<<< HEAD
 			baseConfigurationReference = 8E1BE6465444C567F5D1B8E6 /* Pods-FolioReaderTests.release.xcconfig */;
-=======
-			baseConfigurationReference = CAC0269E94F6AC7117779473 /* Pods-FolioReaderTests.release.xcconfig */;
->>>>>>> 7f9ad8b... refactored UIColor(rgba:)
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = FolioReaderTests/Info.plist;
