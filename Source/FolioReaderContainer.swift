@@ -111,55 +111,63 @@ class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
         centerNavigationController.view.addGestureRecognizer(panGestureRecognizer)
 
         // Read async book
+        let priority = DISPATCH_QUEUE_PRIORITY_HIGH
+        dispatch_async(dispatch_get_global_queue(priority, 0), tryLoadingEbook)
+    }
+
+    /**
+     Attempts to open the passed-in `epubPath`
+     
+     If the epubPath is nil, the `errorOnLoad` flag will be set, and the view controller will be dismissed
+    */
+    private func tryLoadingEbook() {
         guard let epubPath = epubPath else {
             print("Epub path is nil.")
             errorOnLoad = true
             return
         }
 
-        let priority = DISPATCH_QUEUE_PRIORITY_HIGH
-        dispatch_async(dispatch_get_global_queue(priority, 0), {
+        var isDir: ObjCBool = false
+        let fileManager = NSFileManager.defaultManager()
 
-            var isDir: ObjCBool = false
-            let fileManager = NSFileManager.defaultManager()
-
-            if fileManager.fileExistsAtPath(epubPath, isDirectory:&isDir) {
-                if isDir {
-                    book = FREpubParser().readEpub(filePath: epubPath)
-                } else {
-                    book = FREpubParser().readEpub(epubPath: epubPath, removeEpub: self.shouldRemoveEpub)
-                }
+        if fileManager.fileExistsAtPath(epubPath, isDirectory:&isDir) {
+            if isDir {
+                book = FREpubParser().readEpub(filePath: epubPath)
+            } else {
+                book = FREpubParser().readEpub(epubPath: epubPath, removeEpub: self.shouldRemoveEpub)
             }
-            else {
-                print("Epub file does not exist.")
-                self.errorOnLoad = true
-            }
+        }
+        else {
+            print("Epub file does not exist.")
+            self.errorOnLoad = true
+        }
 
-            FolioReader.sharedInstance.isReaderOpen = true
-            
-            guard self.errorOnLoad == false else {
-                return
-            }
-            // Reload data
-            dispatch_async(dispatch_get_main_queue(), {
-                self.centerViewController.reloadData()
-                self.addLeftPanelViewController()
-                self.addAudioPlayer()
+        FolioReader.sharedInstance.isReaderOpen = true
 
-                // Open panel if does not have a saved point
-                if FolioReader.defaults.valueForKey(kBookId) == nil {
-                    self.toggleLeftPanel()
-                }
+        guard self.errorOnLoad == false else {
+            return
+        }
+        // Reload data
+        dispatch_async(dispatch_get_main_queue(), ebookDidLoad)
+    }
 
-                FolioReader.sharedInstance.isReaderReady = true
-            })
-        })
+    private func ebookDidLoad() {
+        self.centerViewController.reloadData()
+        self.addLeftPanelViewController()
+        self.addAudioPlayer()
+
+        // Open panel if does not have a saved point
+        if FolioReader.defaults.valueForKey(kBookId) == nil {
+            self.toggleLeftPanel()
+        }
+
+        FolioReader.sharedInstance.isReaderReady = true
     }
 
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         showShadowForCenterViewController(true)
-        
+        // @NOTE: can we actually guarantee that `errorOnLoad` will be set before `viewDidAppear(_:)` is called?
         if errorOnLoad {
             dismissViewControllerAnimated(true, completion: nil)
         }
@@ -204,7 +212,6 @@ class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
     
     func animateLeftPanel(shouldExpand shouldExpand: Bool) {
         if (shouldExpand) {
-            
             if let width = pageWidth {
                 if isPad {
                     centerPanelExpandedOffset = width-400
@@ -218,7 +225,7 @@ class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
             
             currentState = .LeftPanelExpanded
             delegate.container(didExpandLeftPanel: leftViewController)
-            animateCenterPanelXPosition(targetPosition: CGRectGetWidth(centerNavigationController.view.frame) - centerPanelExpandedOffset)
+            animateCenterPanelXPosition(targetPosition: centerNavigationController.view.frame.width - centerPanelExpandedOffset)
             
             // Reload to update current reading chapter
             leftViewController.tableView.reloadData()
@@ -258,31 +265,28 @@ class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
     // MARK: Gesture recognizer
     
     func handleTapGesture(recognizer: UITapGestureRecognizer) {
-        if currentState == .LeftPanelExpanded {
+        if case .LeftPanelExpanded = currentState {
             toggleLeftPanel()
         }
     }
     
     func handlePanGesture(recognizer: UIPanGestureRecognizer) {
         let gestureIsDraggingFromLeftToRight = (recognizer.velocityInView(view).x > 0)
-        
+        // TODO: we force-unwrap `recognizer.view!` so much here that we might as well just guard against it and save the keystrokes/exclamation-mark stress
         switch(recognizer.state) {
-        case .Began:
-            if currentState == .BothCollapsed && gestureIsDraggingFromLeftToRight {
-                currentState = .Expanding
-            }
-        case .Changed:
-            if currentState == .LeftPanelExpanded || currentState == .Expanding && recognizer.view!.frame.origin.x >= 0 {
-                recognizer.view!.center.x = recognizer.view!.center.x + recognizer.translationInView(view).x
-                recognizer.setTranslation(CGPointZero, inView: view)
-            }
+        case .Began where currentState == .BothCollapsed && gestureIsDraggingFromLeftToRight:
+            currentState = .Expanding
+        case .Changed where currentState == .LeftPanelExpanded || currentState == .Expanding && recognizer.view!.frame.origin.x >= 0:
+            recognizer.view!.center.x = recognizer.view!.center.x + recognizer.translationInView(view).x
+            recognizer.setTranslation(CGPointZero, inView: view)
         case .Ended:
-            if leftViewController != nil {
-                let gap = 20 as CGFloat
-                let xPos = recognizer.view!.frame.origin.x
-                let canFinishAnimation = gestureIsDraggingFromLeftToRight && xPos > gap ? true : false
-                animateLeftPanel(shouldExpand: canFinishAnimation)
+            guard let leftViewController = leftViewController else {
+                return
             }
+            let gap = 20 as CGFloat
+            let xPos = recognizer.view!.frame.origin.x
+            let canFinishAnimation = gestureIsDraggingFromLeftToRight && xPos > gap
+            animateLeftPanel(shouldExpand: canFinishAnimation)
         default:
             break
         }
@@ -302,12 +306,14 @@ class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
         return isNight(.LightContent, .Default)
     }
     
-    
-    
-    // MARK: - Side Panel delegate
-    
+}
+
+// MARK: - Side Panel delegate
+extension FolioReaderContainer {
+
     func sidePanel(sidePanel: FolioReaderSidePanel, didSelectRowAtIndexPath indexPath: NSIndexPath, withTocReference reference: FRTocReference) {
         collapseSidePanels()
         delegate.container(sidePanel, didSelectRowAtIndexPath: indexPath, withTocReference: reference)
     }
+
 }
