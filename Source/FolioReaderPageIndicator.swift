@@ -39,7 +39,8 @@ class FolioReaderPageIndicator: UIView {
         minutesLabel.font = UIFont(name: "Avenir-Light", size: 10)!
         minutesLabel.textAlignment = NSTextAlignment.Right
 //        minutesLabel.alpha = 0
-        addSubview(minutesLabel)
+        // addSubview(minutesLabel)
+        // pankaj remove minutes label
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -51,8 +52,10 @@ class FolioReaderPageIndicator: UIView {
         pagesLabel.sizeToFit()
         
         let fullW = pagesLabel.frame.width + minutesLabel.frame.width
-        minutesLabel.frame.origin = CGPoint(x: frame.width/2-fullW/2, y: 2)
-        pagesLabel.frame.origin = CGPoint(x: minutesLabel.frame.origin.x+minutesLabel.frame.width, y: 2)
+        // minutesLabel.frame.origin = CGPoint(x: frame.width/2-fullW/2, y: 2)
+        //pagesLabel.frame.origin = CGPoint(x: minutesLabel.frame.origin.x+minutesLabel.frame.width, y: 2)
+        // pankaj change pages label frame to full screen
+        pagesLabel.frame.origin = CGPoint(x: frame.size.width/2-pagesLabel.frame.size.width/2, y: 2)
         
         if updateShadow {
             layer.shadowPath = UIBezierPath(rect: bounds).CGPath

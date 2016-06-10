@@ -107,6 +107,10 @@ function setHighlightStyle(style) {
     return thisHighlight.id;
 }
 
+function getCurrentHightlightID() {
+    return thisHighlight.id;
+}
+
 function removeThisHighlight() {
     thisHighlight.outerHTML = thisHighlight.innerHTML;
     return thisHighlight.id;

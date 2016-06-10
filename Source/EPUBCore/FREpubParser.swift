@@ -7,11 +7,7 @@
 //
 
 import UIKit
-#if COCOAPODS
 import SSZipArchive
-#else
-import ZipArchive
-#endif
 import AEXML
 
 class FREpubParser: NSObject, SSZipArchiveDelegate {
@@ -30,8 +26,11 @@ class FREpubParser: NSObject, SSZipArchiveDelegate {
         let book = readEpub(epubPath: epubPath, removeEpub: false)
         
         // Read the cover image
-        if let coverImage = book.coverImage {
-            return UIImage(contentsOfFile: coverImage.fullHref)
+        // pankaj remove cover image check
+        if book.coverImage != nil {
+            if let artwork = UIImage(contentsOfFile: book.coverImage!.fullHref) where book.coverImage != nil {
+                return artwork
+            }
         }
         
         return nil

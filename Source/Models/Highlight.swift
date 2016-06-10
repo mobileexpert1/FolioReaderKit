@@ -20,6 +20,8 @@ class Highlight: NSManagedObject {
     @NSManaged var highlightId: String
     @NSManaged var page: NSNumber
     @NSManaged var type: NSNumber
+    
+    @NSManaged var note: String
 
 }
 
@@ -30,6 +32,7 @@ extension Highlight {
     
     static func persistHighlight(object: FRHighlight, completion: Completion?) {
         var highlight: Highlight?
+        
         
         do {
             let fetchRequest = NSFetchRequest(entityName: "Highlight")
@@ -46,6 +49,10 @@ extension Highlight {
             highlight!.contentPost = object.contentPost
             highlight!.date = object.date
             highlight!.type = object.type.hashValue
+            
+            if ((object.note) != nil) {
+                highlight!.note = object.note!
+            }
         } else {
             highlight = NSEntityDescription.insertNewObjectForEntityForName("Highlight", inManagedObjectContext: coreDataManager.managedObjectContext) as? Highlight
             coreDataManager.saveContext()
@@ -58,6 +65,10 @@ extension Highlight {
             highlight!.highlightId = object.id
             highlight!.page = object.page
             highlight!.type = object.type.hashValue
+            
+            if ((object.note) != nil) {
+            highlight!.note = object.note!
+            }
         }
 
         // Save
@@ -101,6 +112,37 @@ extension Highlight {
         } catch let error as NSError {
             print("Error on update highlight: \(error)")
         }
+    }
+    
+    static func getHighlightByID(highlightId: String) -> Highlight {
+        var highlights: [Highlight]?
+        let predicate = NSPredicate(format:"highlightId = %@", highlightId)
+        
+        do {
+            let fetchRequest = NSFetchRequest(entityName: "Highlight")
+            let sorter: NSSortDescriptor = NSSortDescriptor(key: "date" , ascending: false)
+            fetchRequest.predicate = predicate
+            fetchRequest.sortDescriptors = [sorter]
+            
+            highlights = try coreDataManager.managedObjectContext.executeFetchRequest(fetchRequest) as? [Highlight]
+            if highlights != nil && highlights!.count > 0 {
+            return highlights![0]
+            }
+            return Highlight()
+        } catch {
+            return Highlight()
+        }
+/*
+        var highlight: Highlight?
+        do {
+            let fetchRequest = NSFetchRequest(entityName: "Highlight")
+            fetchRequest.predicate = NSPredicate(format:"highlightId = %@", highlightId)
+            highlight = try coreDataManager.managedObjectContext.executeFetchRequest(fetchRequest) as? Highlight
+            return highlight!
+        } catch {
+            return Highlight()
+        }
+ */
     }
     
     static func allByBookId(bookId: String, andPage page: NSNumber? = nil) -> [Highlight] {

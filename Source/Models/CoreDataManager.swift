@@ -15,6 +15,8 @@ class CoreDataManager: NSObject {
     
     lazy var applicationDocumentsDirectory: NSURL = {
         let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
+        let documentsPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0]
+         NSLog("Documents directory \(documentsPath)")
         return urls[urls.count-1]
     }()
     

@@ -236,6 +236,8 @@ class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UICollectio
     var animator: ZFModalTransitionAnimator!
     var pageIndicatorView: FolioReaderPageIndicator!
     var bookShareLink: String?
+    // bookmark button
+    var bookMarkBtn : UIButton!
     
     var scrollScrubber: ScrollScrubber!
     
@@ -300,8 +302,20 @@ class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UICollectio
         loadingView.hidesWhenStopped = true
         loadingView.startAnimating()
         view.addSubview(loadingView)
+          loadBookMarkImgView()
+      
+        
     }
     
+    func loadBookMarkImgView(){
+        
+    
+        
+        bookMarkBtn = UIButton(frame: CGRectMake(view.frame.size.width-30, 64, 15, 30))
+        bookMarkBtn.backgroundColor = UIColor.greenColor()
+        self.view.addSubview(bookMarkBtn) // assuming you're in a view controller
+        
+    }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
@@ -312,6 +326,7 @@ class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UICollectio
         // Update pages
         pagesForCurrentPage(currentPage)
         pageIndicatorView.reloadView(updateShadow: true)
+        
     }
 
     func configureNavBar() {
@@ -338,14 +353,25 @@ class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UICollectio
         }
 
         if book.hasAudio() || readerConfig.enableTTS {
-            rightBarIcons.append(UIBarButtonItem(image: audioIcon, style: UIBarButtonItemStyle.Plain, target: self, action:#selector(FolioReaderCenter.togglePlay(_:))))
+            // pankaj remove audio button
+            // rightBarIcons.append(UIBarButtonItem(image: audioIcon, style: UIBarButtonItemStyle.Plain, target: self, action:#selector(FolioReaderCenter.togglePlay(_:))))
         }
 
         navigationItem.rightBarButtonItems = rightBarIcons
     }
 
     func reloadData() {
+        // pankaj check for loadingview nil and create if nil
+        if loadingView == nil {
+            let style: UIActivityIndicatorViewStyle = isNight(.White, .Gray)
+            loadingView = UIActivityIndicatorView(activityIndicatorStyle: style)
+            loadingView.center = view.center
+            loadingView.hidesWhenStopped = true
+            loadingView.startAnimating()
+            view.addSubview(loadingView)
+        }
         loadingView.stopAnimating()
+        
         bookShareLink = readerConfig.localizedShareWebLink
         totalPages = book.spine.spineReferences.count
 
@@ -712,9 +738,7 @@ class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UICollectio
         let indexPath = NSIndexPath(forRow: item, inSection: 0)
         changePageWith(indexPath: indexPath, animated: animated, completion: { () -> Void in
             self.updateCurrentPage({ () -> Void in
-                if (completion != nil) {
-                    completion!()
-                }
+                if (completion != nil) { completion!() }
             })
         })
     }
@@ -737,33 +761,11 @@ class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UICollectio
     }
 
     func changePageWith(indexPath indexPath: NSIndexPath, animated: Bool = false, completion: (() -> Void)? = nil) {
-        if !indexPathIsValid(indexPath) {
-            print("ERROR: Attempt to scroll to invalid index path")
-            if (completion != nil) {
-                completion!()
-            }
-            return
-        }
-        
         UIView.animateWithDuration(animated ? 0.3 : 0, delay: 0, options: .CurveEaseInOut, animations: { () -> Void in
             self.collectionView.scrollToItemAtIndexPath(indexPath, atScrollPosition: .Top, animated: false)
             }) { (finished: Bool) -> Void in
                 if (completion != nil) { completion!() }
         }
-    }
-    
-    func indexPathIsValid(indexPath: NSIndexPath) -> Bool {
-        let section = indexPath.section
-        let row = indexPath.row
-        let lastSectionIndex = numberOfSectionsInCollectionView(collectionView) - 1
-        
-        //Make sure the specified section exists
-        if section > lastSectionIndex {
-            return false
-        }
-        
-        let rowCount = self.collectionView(collectionView, numberOfItemsInSection: indexPath.section) - 1
-        return row <= rowCount
     }
     
     func isLastPage() -> Bool{
@@ -1011,6 +1013,7 @@ class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UICollectio
         if let currentPage = currentPage {
             currentPage.webView.createMenu(options: true)
             currentPage.webView.setMenuVisible(false)
+            currentPage.webView.highlight(nil)
         }
         
         scrollScrubber.scrollViewWillBeginDragging(scrollView)

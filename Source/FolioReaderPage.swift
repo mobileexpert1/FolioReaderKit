@@ -76,6 +76,7 @@ class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRecogni
         
         if highlights.count > 0 {
             for item in highlights {
+                NSLog(item.note)
                 let style = HighlightStyle.classForStyle(item.type.integerValue)
                 let tag = "<highlight id=\"\(item.highlightId)\" onclick=\"callHighlightURL(this);\" class=\"\(style)\">\(item.content)</highlight>"
                 let locator = item.contentPre + item.content + item.contentPost
@@ -86,7 +87,7 @@ class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRecogni
                     html = html.stringByReplacingCharactersInRange(newRange, withString: tag)
                 }
                 else {
-                    print("highlight range not found")
+                    print("highlight range not found -----------------------")
                 }
             }
         }
@@ -143,8 +144,28 @@ class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRecogni
             let decoded = url?.absoluteString.stringByRemovingPercentEncoding as String!
             let rect = CGRectFromString(decoded.substringFromIndex(decoded.startIndex.advancedBy(12)))
             
+            // get current selected highlight and note if any and then show menu
+            if let highlightID = webView.js("getCurrentHightlightID()") {
+                if let highlight : Highlight = Highlight.getHighlightByID(highlightID) {
+                    if (!highlight.note.isEmpty) {
+                         readerConfig.hasNote = true
+                        NSLog(highlight.note)
+                    }
+                    else {
+                        readerConfig.hasNote = false
+                    }
+                }
+            }
+            else {
+                readerConfig.hasNote = false
+            }
+
+            
             webView.createMenu(options: true)
-            webView.setMenuVisible(true, andRect: rect)
+             webView.setMenuVisible(true, andRect: rect)
+            
+           
+            
             menuIsVisible = true
             
             return false
@@ -371,34 +392,46 @@ extension UIWebView {
         }
     }
     
-    public override func canPerformAction(action: Selector, withSender sender: AnyObject?) -> Bool {
+    var haveNote: Bool {
+        get { return objc_getAssociatedObject(self, &sAssociationKey) as? Bool ?? false }
+        set(newValue) {
+            objc_setAssociatedObject(self, &sAssociationKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+        }
+    }
 
+    
+    public override func canPerformAction(action: Selector, withSender sender: AnyObject?) -> Bool {
         // menu on existing highlight
+        
         if isShare {
-            if action == #selector(UIWebView.colors(_:)) || (action == #selector(UIWebView.share(_:)) && readerConfig?.allowSharing == true) || action == #selector(UIWebView.remove(_:)) {
+            if action == #selector(UIWebView.colors(_:))
+                || (action == #selector(UIWebView.share(_:)) && readerConfig.allowSharing == true)
+                || action == #selector(UIWebView.remove(_:))
+                || (action == #selector(UIWebView.viewNote(_:)) && readerConfig.hasNote == true){
                 return true
             }
             return false
 
-            // menu for selecting highlight color
+        // menu for selecting highlight color
         } else if isColors {
             if action == #selector(UIWebView.setYellow(_:)) || action == #selector(UIWebView.setGreen(_:)) || action == #selector(UIWebView.setBlue(_:)) || action == #selector(UIWebView.setPink(_:)) || action == #selector(UIWebView.setUnderline(_:)) {
                 return true
             }
             return false
 
-            // default menu
+        // default menu
         } else {
             var isOneWord = false
             if let result = js("getSelectedText()") where result.componentsSeparatedByString(" ").count == 1 {
                 isOneWord = true
             }
-
+            
             if action == #selector(UIWebView.highlight(_:))
-                || (action == #selector(UIWebView.define(_:)) && isOneWord)
-                || (action == #selector(UIWebView.play(_:)) && (book.hasAudio() || readerConfig?.enableTTS == true))
-                || (action == #selector(UIWebView.share(_:)) && readerConfig?.allowSharing == true)
-                || (action == #selector(NSObject.copy(_:)) && readerConfig?.allowSharing == true) {
+            || action == #selector(UIWebView.addNote(_:))
+            || (action == #selector(UIWebView.define(_:)) && isOneWord)
+            || (action == #selector(UIWebView.play(_:)) && (book.hasAudio() || readerConfig.enableTTS))
+            || (action == #selector(UIWebView.share(_:)) && readerConfig.allowSharing == true)
+            || (action == #selector(NSObject.copy(_:)) && readerConfig.allowSharing == true) {
                 return true
             }
             return false
@@ -431,26 +464,78 @@ extension UIWebView {
     }
     
     func remove(sender: UIMenuController?) {
+        
         if let removedId = js("removeThisHighlight()") {
+           
             Highlight.removeById(removedId)
+        
         }
         
         setMenuVisible(false)
     }
     
     func highlight(sender: UIMenuController?) {
+         currentNote = ""
         let highlightAndReturn = js("highlightString('\(HighlightStyle.classForStyle(FolioReader.sharedInstance.currentHighlightStyle))')")
-        let jsonData = highlightAndReturn?.dataUsingEncoding(NSUTF8StringEncoding)
+       let jsonData = highlightAndReturn?.dataUsingEncoding(NSUTF8StringEncoding)
+        if let checkNil = jsonData {
+        } else {return}
+        
         
         do {
             let json = try NSJSONSerialization.JSONObjectWithData(jsonData!, options: []) as! NSArray
             let dic = json.firstObject as! [String: String]
             let rect = CGRectFromString(dic["rect"]!)
             
+            // pankaj add bookmark for testing
+            var bookMarkBtn = UIButton(frame: CGRectMake(frame.size.width-30, rect.origin.y, 15, 30))
+            bookMarkBtn.backgroundColor = UIColor.greenColor()
+            addSubview(bookMarkBtn) // assuming you're in a view controller
+            
+            
+            
             // Force remove text selection
             userInteractionEnabled = false
             userInteractionEnabled = true
+            
+            readerConfig.hasNote = false
+             createMenu(options: true)
+            setMenuVisible(true, andRect: rect)
+            
+            // Persist
+            let html = js("getHTML()")
+            if let highlight = FRHighlight.matchHighlight(html, andId: dic["id"]!) {
+                Highlight.persistHighlight(highlight, completion: nil)
+            }
+           
+        } catch {
+            print("Could not receive JSON")
+        }
+    }
 
+    // pankaj code to copy highlight and add note
+    func highlightAndSaveNote(highlightString: String?) {
+        let highlightAndReturn = highlightString
+        let jsonData = highlightAndReturn?.dataUsingEncoding(NSUTF8StringEncoding)
+        if let checkNil = jsonData {
+        } else {return}
+        
+        
+        do {
+            let json = try NSJSONSerialization.JSONObjectWithData(jsonData!, options: []) as! NSArray
+            let dic = json.firstObject as! [String: String]
+            let rect = CGRectFromString(dic["rect"]!)
+            
+            var bookMarkBtn = UIButton(frame: CGRectMake(frame.size.width-30, rect.origin.y, 15, 30))
+            bookMarkBtn.backgroundColor = UIColor.greenColor()
+            addSubview(bookMarkBtn) // assuming you're in a view controller
+            
+            
+            
+            // Force remove text selection
+            userInteractionEnabled = false
+            userInteractionEnabled = true
+            
             createMenu(options: true)
             setMenuVisible(true, andRect: rect)
             
@@ -459,11 +544,75 @@ extension UIWebView {
             if let highlight = FRHighlight.matchHighlight(html, andId: dic["id"]!) {
                 Highlight.persistHighlight(highlight, completion: nil)
             }
+            
+            currentNote = ""
         } catch {
             print("Could not receive JSON")
         }
     }
+    
+    func addNote(sender: UIMenuController?) {
+        let highlightAndReturn = js("highlightString('\(HighlightStyle.classForStyle(1))')")
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyboard.instantiateViewControllerWithIdentifier("AddNote") as! AddNote
+        vc.webView = self
+        vc.highlightString = highlightAndReturn
+        FolioReader.sharedInstance.readerContainer.showViewController(vc, sender: nil)
+        
+        // self.presentViewController(loginPageView, animated: true, completion: nil)
+        //  setMenuVisible(true)
+        // Force remove text selection
+        // @NOTE: this doesn't seem to always work
+        // userInteractionEnabled = false
+        // userInteractionEnabled = true
+    }
+    
+    func viewNote(sender: UIMenuController?) {
+        
+        // get current selected highlight and note if any and then show menu
+        var noteText : String
+        if let highlightID = js("getCurrentHightlightID()") {
+            if let highlight : Highlight = Highlight.getHighlightByID(highlightID) {
+                if (!highlight.note.isEmpty) {
+                    readerConfig.hasNote = true
+                    NSLog(highlight.note)
+                    noteText = highlight.note
+                    
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    let vc = storyboard.instantiateViewControllerWithIdentifier("AddNote") as! AddNote
+                    vc.noteText = highlight.note
+                    vc.webView = self
+                    FolioReader.sharedInstance.readerContainer.showViewController(vc, sender: nil)
+                }
+                else {
+                    readerConfig.hasNote = false
+                }
+            }
+        }
+        else {
+            readerConfig.hasNote = false
+        }
+        
+        
+        
+        // self.presentViewController(loginPageView, animated: true, completion: nil)
+        //  setMenuVisible(true)
+        // Force remove text selection
+        // @NOTE: this doesn't seem to always work
+        // userInteractionEnabled = false
+        // userInteractionEnabled = true
+    }
 
+    
+    func removeHighlightOnNoteCancel() {
+    
+        if let removedId = js("removeThisHighlight()") {
+            
+        }
+    
+    }
+    
     func define(sender: UIMenuController?) {
         let selectedText = js("getSelectedText()")
         
@@ -485,7 +634,7 @@ extension UIWebView {
         userInteractionEnabled = true
     }
 
-
+  
     // MARK: - Set highlight styles
     
     func setYellow(sender: UIMenuController?) {
@@ -543,7 +692,15 @@ extension UIWebView {
         let pinkItem = UIMenuItem(title: "P", image: pink!, action: #selector(UIWebView.setPink(_:)))
         let underlineItem = UIMenuItem(title: "U", image: underline!, action: #selector(UIWebView.setUnderline(_:)))
         
-        let menuItems = [playAudioItem, highlightItem, defineItem, colorsItem, removeItem, yellowItem, greenItem, blueItem, pinkItem, underlineItem, shareItem]
+        // pankaj new note button
+        let noteItem = UIMenuItem(title: "Add Note", action: #selector(UIWebView.addNote(_:)))
+        let viewNoteItem = UIMenuItem(title: "View Note", action: #selector(UIWebView.viewNote(_:)))
+
+
+        
+        //let menuItems = [playAudioItem, highlightItem, defineItem, colorsItem, removeItem, yellowItem, greenItem, blueItem, pinkItem, underlineItem, shareItem]
+        // pankaj remove play and define and colors and underline option icon from popup menu
+         let menuItems = [highlightItem,noteItem, removeItem,viewNoteItem, yellowItem, greenItem, blueItem, pinkItem, underlineItem, shareItem]
 
         UIMenuController.sharedMenuController().menuItems = menuItems
     }
@@ -572,14 +729,7 @@ extension UIWebView {
 
 extension UIMenuItem {
     convenience init(title: String, image: UIImage, action: Selector) {
-      #if COCOAPODS
         self.init(title: title, action: action)
         self.cxa_initWithTitle(title, action: action, image: image, hidesShadow: true)
-      #else
-        let settings = CXAMenuItemSettings()
-        settings.image = image
-        settings.shadowDisabled = true
-        self.init(title: title, action: action, settings: settings)
-      #endif
     }
 }

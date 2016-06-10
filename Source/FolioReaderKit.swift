@@ -50,11 +50,13 @@ enum MediaOverlayStyle: Int {
     }
 }
 
+var currentNote = String()
+
 /**
 *  Main Library class with some useful constants and methods
 */
-public class FolioReader : NSObject {
-    private override init() {}
+@objc public class FolioReader : NSObject {
+    public override init() {}
     
     static let sharedInstance = FolioReader()
     static let defaults = NSUserDefaults.standardUserDefaults()

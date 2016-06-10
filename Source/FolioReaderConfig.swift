@@ -47,6 +47,10 @@ public class FolioReaderConfig: NSObject {
     public var localizedShareAllExcerptsFrom: String
     public var localizedShareBy: String
     
+    
+    // pankaj for note selection
+     public var hasNote = false
+    
     // MARK: - Init with defaults
     
     public override init() {

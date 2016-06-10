@@ -88,6 +88,8 @@ class FRHighlight: NSObject {
     var bookId: String!
     var type: HighlightStyle!
     
+    var note: String?
+    
     /**
     Match a highlight on string.
     */
@@ -129,6 +131,8 @@ class FRHighlight: NSObject {
             highlight.contentPost = contentPost
             highlight.page = currentPageNumber
             highlight.bookId = (kBookId as NSString).stringByDeletingPathExtension
+            
+            highlight.note = currentNote
             
             return highlight
         }
